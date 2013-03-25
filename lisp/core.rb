@@ -1,5 +1,7 @@
-def PPP(*args)
+class ErrorLog
+  def self.print(*args)
     p *args
+  end
 end
 
 class LispEvaluator
@@ -162,7 +164,9 @@ class LispEvaluator
         if code.class==::Symbol
           return hash[code]
         elsif code.class==Tree
-          val=(run code.name,hash).call hash,*code.args
+          func=(run code.name,hash)
+          ::ErrorLog.print code if func.nil?
+          val=func.call hash,*code.args
           return val if val.class!=TailCall
           code=val.code
           hash=val.hash

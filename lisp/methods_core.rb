@@ -4,12 +4,12 @@ class LispEvaluator
       code=args.pop
       argument_list=args
       hash[name]=->(hash,*args){
-        hash=ChainHash.new hash
+        hash2=ChainHash.new hash
         argument_list.zip(args).each{ |key,code|
-          hash[key]=run code,hash
+          hash2[key]=run code,hash
         }
-        hash.compact!
-        TailCall.new code,hash
+        hash2.compact!
+        TailCall.new code,hash2
       }
       true
     }

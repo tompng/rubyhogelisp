@@ -2,7 +2,29 @@ require './lisp/lisp.rb'
 
 
 Lisp do (defun :inf1,:x,(progn 1,(inf2 1,2))) end
-Lisp do (defun :inf2,:x,:y,(inf1 1)) end
+Lisp do (defun :inf2,:y,:z,(inf1 1)) end
+
+Lisp do
+(progn\
+  (defun :times_rec,:n,:m,:func,
+    (cond (eq :n,:m),
+      nil,
+      (progn (func :n),(times_rec (add :n,1),:m,:func))
+    )
+  ),
+  (defun :times,:n,:func,
+    (times_rec 0,:n,:func)
+  )
+)
+end
+
+Lisp do
+(times 100,
+  (lambda :i,
+    (p :i)
+  )
+)
+end
 
 
 Lisp do 
