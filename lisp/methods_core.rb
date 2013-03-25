@@ -20,6 +20,9 @@ class LispEvaluator
         run c,hash
       end
     }
+    methods[:list]=->(hash,*args){
+      Quote.new Tree.list(*args.map{|x|run x,hash})
+    }
     methods[:cons]=->(hash,a,b){
       a=run(a,hash)
       b=run(b,hash)
@@ -52,27 +55,6 @@ class LispEvaluator
     }
     methods[:atom]=->(hash,a){
       run(a,hash).class!=Tree
-    }
-    methods[:add]=->(hash,a,b){
-      run(a,hash)+run(b,hash)
-    }
-    methods[:sub]=->(hash,a,b){
-      run(a,hash)-run(b,hash)
-    }
-    methods[:mult]=->(hash,a,b){
-      run(a,hash)*run(b,hash)
-    }
-    methods[:div]=->(hash,a,b){
-      run(a,hash)/run(b,hash)
-    }
-    methods[:mod]=->(hash,a,b){
-      run(a,hash)%run(b,hash)
-    }
-    methods[:lt]=->(hash,a,b){
-      run(a,hash)<run(b,hash)
-    }
-    methods[:le]=->(hash,a,b){
-      run(a,hash)>run(b,hash)
     }
     methods[:p]=->(hash,*a){
       p *a.map{|x|run x,hash}

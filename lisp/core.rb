@@ -46,6 +46,9 @@ class LispEvaluator
     def inspect
       @obj.inspect
     end
+    def to_a
+      unquote.to_a
+    end
   end
   class Tree
     def initialize a,b
@@ -73,10 +76,23 @@ class LispEvaluator
     end
     def inspect
       if list?
-        "("+[name,*args].map(&:inspect).join(",")+")"
+        "("+as_list.map(&:inspect).join(", ")+")"
       else
-        "["+left.inspect+","+right.inspect+"]"
+        to_a.inspect
       end
+    end
+    def as_list
+      if right.class==Tree
+        [left,*right.as_list]
+      else
+        [left]
+      end
+    end
+    def to_a
+      [
+        left.class==Tree ? left.to_a : left,
+        right.class==Tree ? right.to_a : right
+      ]
     end
     def list?
       right.nil?||(right.class==Tree&&right.list?)
@@ -151,7 +167,8 @@ class LispEvaluator
     @codeparser.run code,hash
   end
   def exec(hash,&block)
-    run(@codeparser.instance_eval(&block),hash)
+    val=run(@codeparser.instance_eval(&block),hash)
+    val.class==Quote ? val.unquote : val
   end
 
   def self.lispevaluator
