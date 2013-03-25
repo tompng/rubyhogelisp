@@ -109,22 +109,6 @@ class LispEvaluator
     def initialize methods
       @methods=methods
     end
-    def defun name,*args
-      code=args.pop
-      argument_list=args
-      @methods[name]=->(hash,*args){
-        hash=ChainHash.new hash
-        argument_list.zip(args).each{ |key,code|
-          hash[key]=run code,hash
-        }
-        run code,hash
-      }
-      true
-    end
-
-    def quote code
-      Quote.new code
-    end
 
     def Q code
       Quote.new code

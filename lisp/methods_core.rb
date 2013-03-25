@@ -1,5 +1,18 @@
 class LispEvaluator
   define_lisp_methods do
+    methods[:defun]=->(hash,name,*args){
+      code=args.pop
+      argument_list=args
+      methods[name]=->(hash,*args){
+        hash=ChainHash.new hash
+        argument_list.zip(args).each{ |key,code|
+          hash[key]=run code,hash
+        }
+        run code,hash
+      }
+      true
+    }
+
     methods[:setq]=->(hash,key,value){
       hash.update key,run(value,hash)
     }
