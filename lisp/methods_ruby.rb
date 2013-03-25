@@ -1,6 +1,6 @@
 class LispEvaluator
-  define_lisp_methods do
-    methods[:send]=->(hash,obj,method,*blockargs){
+  define_globals do
+    globals[:send]=->(hash,obj,method,*blockargs){
       rbobj=run(obj,hash)
       name=method.name
       args=method.args.map{|m|run(m,hash)}
@@ -28,7 +28,7 @@ class LispEvaluator
         rbobj.send(name,*args,&outerblock)
       end
     }
-    methods[:assign]=->(hash,obj,method){
+    globals[:assign]=->(hash,obj,method){
       rbobj=run(obj,hash)
       name=method.name
       rbobj.send name.to_s+'=',run(method.args[0],hash)

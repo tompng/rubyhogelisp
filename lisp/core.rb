@@ -106,9 +106,6 @@ class LispEvaluator
     end
   end
   class CodeParser < BasicObject
-    def initialize methods
-      @methods=methods
-    end
 
     def Q code
       Quote.new code
@@ -130,45 +127,43 @@ class LispEvaluator
       if code.class==::Symbol
         hash[code]
       elsif code.class==Tree
-        @methods[code.name].call hash,*code.args
+        (run code.name,hash).call hash,*code.args
       else
         code
       end
     end
   end
   def initialize
-    @methods={ }
-    @codeparser=CodeParser.new @methods
+    @codeparser=CodeParser.new
   end
-  def methods
-    @methods
+  def globals
+    @globals||={}
   end
-  def define_lisp_methods(&block)
+  def define_globals(&block)
     self.instance_eval &block
   end
 
   def run(code,hash)
     @codeparser.run code,hash
   end
-  def exec(hash,&block)
-    val=run(@codeparser.instance_eval(&block),hash)
+  def exec(main,hash,&block)
+    globals[:main]=main
+    hash=ChainHash.new(hash,globals)
+    code=@codeparser.instance_eval(&block)
+    val=run code,hash
     val.class==Quote ? val.unquote : val
   end
 
   def self.lispevaluator
     @lispevaluator||=LispEvaluator.new
   end
-  def self.globalvars
-    @globalvars||={}
-  end
 
   def self.exec(main,hash,&block)
-    globalvars[:main]=main
-    lispevaluator.exec(ChainHash.new(hash,globalvars),&block)
+    lispevaluator.exec(main,hash,&block)
   end
 
-  def self.define_lisp_methods(&block)
-    lispevaluator.define_lisp_methods(&block)
+  def self.define_globals(&block)
+    lispevaluator.define_globals(&block)
   end
 end
 
