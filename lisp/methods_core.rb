@@ -8,11 +8,22 @@ class LispEvaluator
         argument_list.zip(args).each{ |key,code|
           hash[key]=run code,hash
         }
-        run code,hash
+        hash.compact!
+        TailCall.new code,hash
       }
       true
     }
-
+    globals[:lambda]=->(hash,*args){
+      code=args.pop
+      argument_list=args
+      ->(hash,*args){
+        hash=ChainHash.new hash
+        argument_list.zip(args).each{ |key,code|
+          hash[key]=run code,hash
+        }
+        TailCall.new code,hash
+      }
+    }
     globals[:setq]=->(hash,key,value){
       hash.update key,run(value,hash)
     }
@@ -20,27 +31,28 @@ class LispEvaluator
       hash[key]=nil
     }
     globals[:progn]=->(hash,*args){
-      val=nil
+      last=args.pop
       args.each do |arg|
         val=run arg,hash
       end
-      val
+      TailCall.new last,hash
     }
     globals[:cond]=->(hash,a,b,c){
       if run a,hash
-        run b,hash
+        TailCall.new b,hash
       else
-        run c,hash
+        TailCall.new c,hash
       end
     }
     globals[:eval]=->(hash,code){
-      run(run(code,hash).unquote,hash)
+      TailCall.new run(code,hash).unquote,hash
     }
     globals[:eq]=->(hash,a,b){
       run(a,hash)==run(b,hash)
     }
     globals[:p]=->(hash,*a){
       p *a.map{|x|run x,hash}
+      nil
     }
   end
 end

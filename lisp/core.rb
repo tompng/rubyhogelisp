@@ -1,3 +1,7 @@
+def PPP(*args)
+    p *args
+end
+
 class LispEvaluator
   class ChainHash
     def initialize parent=nil,hash={}
@@ -12,6 +16,23 @@ class LispEvaluator
     end
     def hash
       @hash
+    end
+    def length
+      if parent.class==ChainHash
+        1+parent.length
+      else
+        0
+      end
+    end
+    def compact!
+      while parent.class==ChainHash
+        phash=parent.hash
+        if (phash.keys-hash.keys).empty?
+          @parent=parent.parent 
+        else
+          break
+        end
+      end
     end
     def [] key
       if @hash.has_key? key
@@ -105,6 +126,19 @@ class LispEvaluator
       end
     end
   end
+  class TailCall
+    def initialize code,hash
+      @code=code
+      @hash=hash
+    end
+    def code
+      @code
+    end
+    def hash
+      @hash
+    end
+  end
+
   class CodeParser < BasicObject
 
     def Q code
@@ -124,12 +158,17 @@ class LispEvaluator
     end
 
     def run code,hash
-      if code.class==::Symbol
-        hash[code]
-      elsif code.class==Tree
-        (run code.name,hash).call hash,*code.args
-      else
-        code
+      while true
+        if code.class==::Symbol
+          return hash[code]
+        elsif code.class==Tree
+          val=(run code.name,hash).call hash,*code.args
+          return val if val.class!=TailCall
+          code=val.code
+          hash=val.hash
+        else
+          return code
+        end
       end
     end
   end

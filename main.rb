@@ -1,5 +1,10 @@
 require './lisp/lisp.rb'
 
+
+Lisp do (defun :inf1,:x,(progn 1,(inf2 1,2))) end
+Lisp do (defun :inf2,:x,:y,(inf1 1)) end
+
+
 Lisp do 
 (p\
   (cons 1,2),
@@ -22,6 +27,7 @@ Lisp do
   (defun :sqrt,:x,(sqrtrec :x,:x,10))
 )
 end
+Lisp do (p (sqrt 2)) end
 Lisp do
 (progn\
   (defun :square,(mult :x,:x)),
@@ -41,3 +47,5 @@ Lisp do
   (p (sqrt 2))
 )
 end
+
+
