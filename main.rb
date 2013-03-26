@@ -1,18 +1,18 @@
 require './lisp/lisp.rb'
 
 
-Lisp do (defun :inf1,:x,(progn 1,(inf2 1,2))) end
-Lisp do (defun :inf2,:y,:z,(inf1 1)) end
+Lisp do (define (inf1 :x),(progn 1,(inf2 1,2))) end
+Lisp do (define (inf2 :y,:z),(inf1 1)) end
 
 Lisp do
 (progn\
-  (defun :times_rec,:n,:m,:func,
+  (define (times_rec :n,:m,:func),
     (cond (eq :n,:m),
       nil,
       (progn (func :n),(times_rec (add :n,1),:m,:func))
     )
   ),
-  (defun :times,:n,:func,
+  (define (times :n,:func),
     (times_rec 0,:n,:func)
   )
 )
@@ -38,22 +38,22 @@ Lisp do
 end
 Lisp do
 (progn\
-  (defun :fact,:x,(cond (eq :x,0),1,(mult :x,(fact (sub :x,1))))),
-  (defun :abs,:x,(cond (lt :x,0),(sub 0,:x),:x)),
-  (defun :sqrtrec,:x,:y,:n,
+  (define (fact :x),(cond (eq :x,0),1,(mult :x,(fact (sub :x,1))))),
+  (define (abs :x),(cond (lt :x,0),(sub 0,:x),:x)),
+  (define (sqrtrec :x,:y,:n),
     (cond (eq :n,0),
       :y,
       (sqrtrec :x,(add :y,(div (sub (div :x,:y),:y),2.0)),(sub :n,1))
     )
   ),
-  (defun :sqrt,:x,(sqrtrec :x,:x,10))
+  (define (sqrt :x),(sqrtrec :x,:x,10))
 )
 end
 Lisp do (p (sqrt 2)) end
 Lisp do
 (progn\
-  (defun :square,(mult :x,:x)),
-  (defun :list_len,:list,(cond :list,(add 1,(list_len (cdr :list))),0)),
+  (define (square :x),(mult :x,:x)),
+  (define (list_len :list),(cond :list,(add 1,(list_len (cdr :list))),0)),
   (p\
     (fact 5),
     (eval !(fact 5)),

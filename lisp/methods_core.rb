@@ -1,9 +1,9 @@
 class LispEvaluator
   define_globals do
-    globals[:defun]=->(hash,name,*args){
-      code=args.pop
-      argument_list=args
-      hash[name]=->(hash,*args){
+    globals[:define]=->(hash,func,code){
+      p func.name,func.args
+      argument_list=func.args
+      hash[func.name]=->(hash,*args){
         hash2=ChainHash.new hash
         argument_list.zip(args).each{ |key,code|
           hash2[key]=run code,hash

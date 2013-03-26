@@ -26,6 +26,7 @@ class LispEvaluator
         0
       end
     end
+    #TODO compact! incomplete. should look all ancestors
     def compact!
       while parent.class==ChainHash
         phash=parent.hash
