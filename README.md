@@ -1,7 +1,7 @@
 rubyhogelisp
 ============
 
-lisp-like language inside ruby
+lisp-like language in ruby
 
 sample1
 
