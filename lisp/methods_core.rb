@@ -17,10 +17,6 @@ class LispEvaluator
       end
       TailCall.new code,hash
     }
-    globals[:vars_dump]=->(hash,*args){
-      p hash.hash
-      nil
-    }
     globals[:progn]=->(hash,*args){
       last=args.pop
       args.each do |arg|
@@ -43,6 +39,10 @@ class LispEvaluator
     }
     globals[:p]=->(hash,*a){
       p *a.map{|x|run x,hash}
+      nil
+    }
+    globals[:print]=->(hash,*a){
+      print *a.map{|x|run x,hash}
       nil
     }
   end
