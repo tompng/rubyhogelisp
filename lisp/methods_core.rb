@@ -1,7 +1,6 @@
 class LispEvaluator
   define_globals do
     globals[:define]=->(hash,func,code){
-      p func.name,func.args
       argument_list=func.args
       hash[func.name]=->(hash,*args){
         hash2=ChainHash.new hash
@@ -24,11 +23,18 @@ class LispEvaluator
         TailCall.new code,hash
       }
     }
-    globals[:setq]=->(hash,key,value){
-      hash.update key,run(value,hash)
+    globals[:let]=->(hash,*args){
+      code=args.pop
+      hash=ChainHash.new hash
+      (args.size/2).times do |i|
+        key,valcode=args[2*i,2]
+        hash[key]=run valcode,hash
+      end
+      TailCall.new code,hash
     }
-    globals[:defq]=->(hash,key){
-      hash[key]=nil
+    globals[:vars_dump]=->(hash,*args){
+      p hash.hash
+      nil
     }
     globals[:progn]=->(hash,*args){
       last=args.pop
