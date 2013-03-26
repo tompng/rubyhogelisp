@@ -41,6 +41,9 @@ class LispEvaluator
       if @hash.has_key? key
         @hash[key]
       else
+        unless @parent.class!=Hash || @parent.has_key?(key)
+          throw "undefined local variable or method `#{key}"
+        end
         @parent[key]
       end
     end
@@ -166,7 +169,7 @@ class LispEvaluator
           return hash[code]
         elsif code.class==Tree
           func=(run code.name,hash)
-          ::ErrorLog.print code if func.nil?
+          ::ErrorLog.print hash.hash,code if func.nil?
           val=func.call hash,*code.args
           return val if val.class!=TailCall
           code=val.code

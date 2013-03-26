@@ -16,13 +16,25 @@ Lisp do
 end
 
 Lisp do
+(progn\
+  (let :x,20,
+    (progn\
+      (define (print20),(p :x)),
+      (let :x,30,
+        print20
+      )
+    )
+  )
+)
+end
+
+Lisp do
 (times 100,
   (lambda :i,
     (p :i)
   )
 )
 end
-
 
 Lisp do 
 (p\
