@@ -9,7 +9,7 @@ class LispEvaluator
       else
         code=blockargs.pop
         block=->(*args){
-          h=ChainHash.new hash
+          h=hash.next
           blockargs.zip(args).each{|key,val|
             h[key]=run(val,hash)
           }

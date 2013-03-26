@@ -10,7 +10,7 @@ class LispEvaluator
     }
     globals[:let]=->(hash,*args){
       code=args.pop
-      hash=ChainHash.new hash
+      hash=hash.next
       (args.size/2).times do |i|
         key,valcode=args[2*i,2]
         hash[key]=run valcode,hash

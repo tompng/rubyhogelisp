@@ -6,61 +6,42 @@ end
 
 class LispEvaluator
   class ChainHash
-    def initialize parent=nil,hash={}
-      @parent=parent
+    def initialize hash,*args
       @hash=hash
+      @chain=[hash]
+      args.each_with_object hash.keys do |hash,keys|
+        defkeys=hash.keys-keys
+        unless defkeys.empty?
+          keys.push *defkeys
+          @chain.push hash
+        end
+      end
+    end
+    def next hash={}
+      ChainHash.new hash,*chain
     end
     def []= key,value
       @hash[key]=value
     end
-    def parent
-      @parent
-    end
-    def hash
-      @hash
+    def chain
+      @chain
     end
     def length
-      if parent.class==ChainHash
-        1+parent.length
-      else
-        0
-      end
-    end
-    #TODO compact! incomplete. should look all ancestors
-    def compact!
-      while parent.class==ChainHash
-        phash=parent.hash
-        if (phash.keys-hash.keys).empty?
-          @parent=parent.parent 
-        else
-          break
-        end
-      end
+      @chain.size
     end
     def [] key
-      if @hash.has_key? key
-        @hash[key]
-      else
-        unless @parent.class!=Hash || @parent.has_key?(key)
-          throw "undefined local variable or method `#{key}"
-        end
-        @parent[key]
+      @chain.each do |hash|
+        return hash[key] if hash.has_key? key
       end
-    end
-    def has_key?
-      return true if @hash.has_key?
-      @parent.has_key if @parent
+      throw "undefined local variable or method `#{key}"
     end
     def update key,value
-      target=self
-      while target.class==ChainHash
-        if target.hash.has_key? key
-          target[key]=value
-          return
-        end
-        target=target.parent
+      hash=@chain.find do |hash| hash.has_key? key end
+      if hash
+        hash[key]=value
+      else
+        @hash[key]=value
       end
-      self[key]=value
     end
   end
   class Quote
@@ -195,7 +176,7 @@ class LispEvaluator
   end
   def exec(main,hash,&block)
     globals[:main]=main
-    hash=ChainHash.new(hash,globals)
+    hash=ChainHash.new globals,hash.clone
     code=@codeparser.instance_eval(&block)
     val=run code,hash
     val.class==Quote ? val.unquote : val
@@ -203,7 +184,7 @@ class LispEvaluator
 
   def lisplambda hash,argument_list,code
     block=->(arghash,*args){
-      hash=ChainHash.new hash
+      hash=hash.next
       argument_list.zip(args).each{ |key,code|
         hash[key]=run code,arghash
       }
