@@ -54,6 +54,9 @@ class LispEvaluator
     def inspect
       @obj.inspect
     end
+    def to_s
+      inspect
+    end
     def to_a
       unquote.to_a
     end
@@ -95,6 +98,9 @@ class LispEvaluator
       else
         [left]
       end
+    end
+    def to_s
+      inspect
     end
     def to_a
       [

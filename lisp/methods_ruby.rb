@@ -8,12 +8,14 @@ class LispEvaluator
         rbobj.send(name,*args)
       else
         code=blockargs.pop
+        evaluator=self
         block=->(*args){
           h=hash.next
           blockargs.zip(args).each{|key,val|
             h[key]=run(val,hash)
           }
-          run(code,h)
+          h[:self]=self
+          evaluator.run(code,h)
         }
         def block.arity=(x)
           @arity=x
