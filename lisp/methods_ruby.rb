@@ -16,10 +16,10 @@ class LispEvaluator
           run(code,h)
         }
         def block.arity=(x)
-          arity=x
+          @arity=x
         end
         def block.arity
-          arity
+          @arity
         end
         block.arity=blockargs.size
         rbobj.send(name,*args,&block)
