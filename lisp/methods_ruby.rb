@@ -1,6 +1,6 @@
 class LispEvaluator
   define_globals do
-    globals[:send]=->(hash,obj,method,*blockargs){
+    def rb_call_for hash,obj,method,*blockargs
       rbobj=run(obj,hash)
       name=method.name
       args=method.args.map{|m|run(m,hash)}
@@ -24,8 +24,23 @@ class LispEvaluator
         block.arity=blockargs.size
         rbobj.send(name,*args,&block)
       end
+    end
+    globals[:send]=->(hash,obj,method,*blockargs){
+      rb_call_for hash,obj,method,*blockargs
     }
-    globals[:assign]=->(hash,obj,method){
+    globals[:call]=->(hash,method,*blockargs){
+      rb_call_for hash,:self,method,*blockargs
+    }
+    globals[:assign]=->(hash,*args){
+      case args.size
+      when 1 then
+       obj=:self
+       method=args.first
+      when 2 then
+        obj,method=args
+      else
+        throw 'argument error'
+      end
       rbobj=run(obj,hash)
       name=method.name
       rbobj.send name.to_s+'=',run(method.args[0],hash)

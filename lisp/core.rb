@@ -174,8 +174,8 @@ class LispEvaluator
   def run(code,hash)
     @codeparser.run code,hash
   end
-  def exec(main,hash,&block)
-    globals[:main]=main
+  def exec(rbobj,hash,&block)
+    globals[:self]=rbobj
     hash=ChainHash.new globals,hash.clone
     code=@codeparser.instance_eval(&block)
     val=run code,hash
@@ -204,8 +204,8 @@ class LispEvaluator
     @lispevaluator||=LispEvaluator.new
   end
 
-  def self.exec(main,hash,&block)
-    lispevaluator.exec(main,hash,&block)
+  def self.exec(rbobj,hash,&block)
+    lispevaluator.exec(rbobj,hash,&block)
   end
 
   def self.define_globals(&block)
