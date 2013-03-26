@@ -201,6 +201,24 @@ class LispEvaluator
     val.class==Quote ? val.unquote : val
   end
 
+  def lisplambda hash,argument_list,code
+    block=->(arghash,*args){
+      hash=ChainHash.new hash
+      argument_list.zip(args).each{ |key,code|
+        hash[key]=run code,arghash
+      }
+      TailCall.new code,hash
+    }
+    def block.arity= x
+      @arity=x
+    end
+    def block.arity
+      @arity
+    end
+    block.arity=argument_list.size
+    block
+  end
+
   def self.lispevaluator
     @lispevaluator||=LispEvaluator.new
   end

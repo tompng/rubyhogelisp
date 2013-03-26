@@ -1,27 +1,12 @@
 class LispEvaluator
   define_globals do
     globals[:define]=->(hash,func,code){
-      argument_list=func.args
-      hash[func.name]=->(arghash,*args){
-        hash2=ChainHash.new hash
-        argument_list.zip(args).each{ |key,code|
-          hash2[key]=run code,arghash
-        }
-        hash2.compact!
-        TailCall.new code,hash2
-      }
-      true
+      hash[func.name]=lisplambda(hash,func.args,code)
     }
     globals[:lambda]=->(hash,*args){
       code=args.pop
       argument_list=args
-      ->(arghash,*args){
-        hash=ChainHash.new hash
-        argument_list.zip(args).each{ |key,code|
-          hash[key]=run code,arghash
-        }
-        TailCall.new code,hash
-      }
+      lisplambda(hash,argument_list,code)
     }
     globals[:let]=->(hash,*args){
       code=args.pop

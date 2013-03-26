@@ -15,17 +15,14 @@ class LispEvaluator
           }
           run(code,h)
         }
-        outerblock=->(*args){
-          block.call *args
-        }
-        def outerblock.arity=(x)
+        def block.arity=(x)
           arity=x
         end
-        def outerblock.arity
+        def block.arity
           arity
         end
-        outerblock.arity=blockargs.size
-        rbobj.send(name,*args,&outerblock)
+        block.arity=blockargs.size
+        rbobj.send(name,*args,&block)
       end
     }
     globals[:assign]=->(hash,obj,method){
