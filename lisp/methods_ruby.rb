@@ -35,10 +35,10 @@ class LispEvaluator
     }
     globals[:assign]=->(hash,*args){
       case args.size
-      when 1 then
+      when 1
        obj=:self
        method=args.first
-      when 2 then
+      when 2
         obj,method=args
       else
         throw 'argument error'

@@ -13,21 +13,13 @@ sample1
 sample2
 
     require './lisp/lisp.rb'
-    require 'tweetstream'
+    require 'sinatra'
     Lisp do
-      (progn\
-        (send TweetStream,(configure),:config,
+      (let :x,1,
+        (call (get '/'),
           (progn\
-            (assign :config,(consumer_key 'MI')),
-            (assign :config,(consumer_secret 'NA')),
-            (assign :config,(oauth_token 'MI')),
-            (assign :config,(oauth_token_secret 'KE'))
-          )
-        ),
-        (send TweetStream,(userstream),:status,
-          (progn\
-            (print (send (send :status,user),name),"\n"),
-            (print (send :status,(text)),"\n\n")
+            (set :x,(add :x,1)),
+            (send (list (call params),:x),(to_s))
           )
         )
       )

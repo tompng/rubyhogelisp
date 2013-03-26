@@ -17,6 +17,14 @@ class LispEvaluator
       end
       TailCall.new code,hash
     }
+    globals[:set]=->(hash,*args){
+      hash=hash.next
+      (args.size/2).times do |i|
+        key,code=args[2*i,2]
+        hash.update key,run(code,hash)
+      end
+      nil
+    }
     globals[:progn]=->(hash,*args){
       last=args.pop
       args.each do |arg|
