@@ -32,7 +32,7 @@ class LispEvaluator
       end
       TailCall.new last,hash
     }
-    globals[:cond]=->(hash,a,b,c){
+    globals[:ifelse]=->(hash,a,b,c){
       if run a,hash
         TailCall.new b,hash
       else

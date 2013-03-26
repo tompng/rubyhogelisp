@@ -7,7 +7,7 @@ sample1
 
     require './lisp/lisp.rb'
     Lisp(num:5) do
-      (p (define (fact :n),(cond (eq :n,0),1,(mult :n,(fact (sub :n,1))))),(fact :num))
+      (p (define (fact :n),(ifelse (eq :n,0),1,(mult :n,(fact (sub :n,1))))),(fact :num))
     end
 
 sample2
@@ -27,7 +27,7 @@ sample2
 
 sample3
     
-    (define (func arg1,arg2),(lisp_code))
+    (define (func :arg1,:arg2),(lisp_code))
 
     sleep 3
     (call (sleep 3))
